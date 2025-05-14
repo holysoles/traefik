@@ -13,6 +13,7 @@ DATE := $(shell date -u '+%Y-%m-%d_%I:%M:%S%p')
 # Default build target
 GOOS := $(shell go env GOOS)
 GOARCH := $(shell go env GOARCH)
+GOGC ?= off
 
 LINT_EXECUTABLES = misspell shellcheck
 
@@ -56,10 +57,10 @@ generate:
 #? binary: Build the binary
 binary: generate-webui dist
 	@echo SHA: $(VERSION) $(CODENAME) $(DATE)
-	CGO_ENABLED=0 GOGC=off GOOS=${GOOS} GOARCH=${GOARCH} go build ${FLAGS[*]} -ldflags "-s -w \
-    -X github.com/traefik/traefik/v3/pkg/version.Version=$(VERSION) \
-    -X github.com/traefik/traefik/v3/pkg/version.Codename=$(CODENAME) \
-    -X github.com/traefik/traefik/v3/pkg/version.BuildDate=$(DATE)" \
+	CGO_ENABLED=0 GOGC=${GOGC} GOOS=${GOOS} GOARCH=${GOARCH} go build ${FLAGS[*]} -ldflags "-s -w \
+    -X github.com/traefik/traefik/v2/pkg/version.Version=$(VERSION) \
+    -X github.com/traefik/traefik/v2/pkg/version.Codename=$(CODENAME) \
+    -X github.com/traefik/traefik/v2/pkg/version.BuildDate=$(DATE)" \
     -installsuffix nocgo -o "./dist/${GOOS}/${GOARCH}/$(BIN_NAME)" ./cmd/traefik
 
 binary-linux-arm64: export GOOS := linux
